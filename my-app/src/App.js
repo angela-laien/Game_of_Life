@@ -14,16 +14,20 @@ const operations = [
   [-1, -1],
   [1, 0],
   [-1, 0]
-]
+];
+
+const generateEmptyGrid = () => {
+  const rows = [];
+  for (let i = 0; i < numRows; i++) {
+    rows.push(Array.from(Array(numCols), () => 0))
+  }
+
+  return rows;
+}
 
 function App() {
   const [grid, setGrid] = useState(() => {
-    const rows = [];
-    for (let i = 0; i < numRows; i++) {
-      rows.push(Array.from(Array(numCols), () => 0))
-    }
-
-    return rows;
+    return generateEmptyGrid()
   });
 
   const[running, setRunning] = useState(false);
@@ -43,13 +47,20 @@ function App() {
             operations.forEach(([x, y]) => {
               const newI = i + x;
               const newK = k + x;
-              if (newI >= 0 && newI < numRows)
+              if (newI >= 0 && newI < numRows && newK >= 0 && newK < numCols) {
+                neighbors += g[newI][newK]
+              }
             })
+            if (neighbors < 2 || neighbors > 3) {
+              gridCopy[i][k] = 0;
+            } else if (g[i][k] === 0 && neighbors === 3) {
+              gridCopy[i][k] = 1;
+            }
           }
         }
-      })
-    })    
-    setTimeout(runSimulation, 1000);
+      });
+    });    
+    setTimeout(runSimulation, 100);
   }, [])
 
   return (
@@ -57,9 +68,30 @@ function App() {
       <button
         onClick={() => {
           setRunning(!running);
+          if (!running) {
+            runningRef.current = true;
+            runSimulation();
+          }
         }}
       >
-        {running ? 'stop' : 'start'}</button>
+        {running ? 'stop' : 'start'}
+      </button>
+      <button onClick={() => {
+        setGrid(generateEmptyGrid());
+      }}>
+        Clear
+      </button>
+      <button onClick={() => {
+        const rows = [];
+        for (let i = 0; i < numRows; i++) {
+          rows.push(
+            Array.from(Array(numCols), () => (Math.random() > 0.8 ? 1 : 0)))
+        }
+      
+        setGrid(rows);
+      }}>
+        Random
+      </button>
       <div style={{
         display: 'grid',
         gridTemplateColumns: `repeat(${numCols}, 10px)`
