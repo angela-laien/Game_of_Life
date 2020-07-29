@@ -1,0 +1,64 @@
+@import url("https://fonts.googleapis.com/css2?family=Kalam&family=Permanent+Marker&family=Rock+Salt&display=swap");
+
+$smallScreen: 800px;
+
+.App {
+  text-align: center;
+  padding-bottom: 5%;
+  .desktop-mobile {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    @media screen and (max-width: $smallScreen) {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
+
+h1 {
+  color: green;
+  font-family: 'Permanent Marker', cursive;
+  font-size: 3rem;
+}
+
+h2 {
+  font-family: 'Kalam', cursive;
+  font-size: 1.5rem;
+  margin-top: -2%;
+}
+
+li {
+  margin: 1.5% 0.5%;
+  font-family: 'Kalam', cursive;
+  font-size: 1.2rem;
+}
+
+.button-sec {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 2% 0%;
+  width: 100%;
+  @media screen and (max-width: $smallScreen) {
+    display: flex;
+    flex-direction: row;
+  }
+  button {
+    margin: 1.5%;
+    color: white;
+    background-color: green;
+    border: none;
+    border-radius: 5px;
+    font-weight: bold;
+    font-family: 'Rock Salt', cursive;
+    font-size: 0.8rem;
+    &:hover{
+      color: green;
+      background-color: white;
+    }
+  }
+}
+

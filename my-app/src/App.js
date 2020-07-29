@@ -1,6 +1,6 @@
 import React, {useState, useCallback, useRef} from 'react';
 import produce from 'immer';
-import './App.css';
+import './App.scss';
 
 // An appropriate data structure to hold a grid of cells that is at least 25x25
 const numRows = 28;
@@ -84,94 +84,107 @@ function App() {
   }, []);
 
   return (
-    <>
+    <div className="App">
       <h1>Game of Life</h1>
-      {/* Button(s) that start & stop the animation */}
-      <button
-        onClick={() => {
-          setRunning(!running);
-          if (!running) {
-            runningRef.current = true;
-            runSimulation();
-          }
-        }}
-      >
-        {running ? 'Stop' : 'Start'}
-      </button>
-      {/* Provide functionality to manually step through the simulation one generation at a time, as opposed to animating automatically */}
-      <button
-        onClick={() => {
-          runningRef.current = true;
-          generationStep();
-        }}
-      >
-        Cell by Generation
-      </button>
-      {/* CUSTOM FEATURES #1 Add an option that creates a random cell configuration that users can run */}
-      <button onClick={() => {
-        const rows = [];
-        for (let i = 0; i < numRows; i++) {
-          rows.push(
-            Array.from(Array(numCols), () => (Math.random() > 0.8 ? 1 : 0)))
-        }
-      
-        setGrid(rows);
-      }}>
-        Random
-      </button>
-      {/* CUSTOM FEATURES #2 Allow users to specify the speed of the simulation */}
-      {!speed ? (
-          <button
+      <div className="desktop-mobile">
+        <div className="left">
+          <h2>Instructions</h2>
+          <li>Click on any white cell to generate a live green cell.</li>
+          <li>Any live cell with less than 2 neighbors dies.</li>
+          <li>Any live cell with 2 or 3 neighbors lives on to the next generation.</li>
+        {/* Button(s) that start & stop the animation */}
+          <div className="button-sec">
+            <button
+              onClick={() => {
+                setRunning(!running);
+                if (!running) {
+                  runningRef.current = true;
+                  runSimulation();
+                }
+              }}
+            >
+              {running ? 'Stop' : 'Start'}
+            </button>
+            {/* Provide functionality to manually step through the simulation one generation at a time, as opposed to animating automatically */}
+            <button
+              onClick={() => {
+                runningRef.current = true;
+                generationStep();
+              }}
+            >
+              Generation
+            </button>
+            {/* CUSTOM FEATURES #1 Add an option that creates a random cell configuration that users can run */}
+            <button onClick={() => {
+              const rows = [];
+              for (let i = 0; i < numRows; i++) {
+                rows.push(
+                  Array.from(Array(numCols), () => (Math.random() > 0.8 ? 1 : 0)))
+              }
+            
+              setGrid(rows);
+            }}>
+              Random
+            </button>
+            {/* CUSTOM FEATURES #2 Allow users to specify the speed of the simulation */}
+            {!speed ? (
+                <button
+                  onClick={() => {
+                    setSpeed(true);
+                  }}
+                > 
+                  10x Speed 
+                </button>
+              ) : (
+                <button
+                  onClick={() => {
+                    setSpeed(false);
+                  }}
+                >
+                  1x Speed 
+                </button>
+              )}
+            {/* Button to clear the grid */}
+            <button onClick={() => {
+              setGrid(emptyGrid());
+            }}>
+              Clear
+            </button>
+          </div>
+        </div>
+        {/* Cell objects or components properties*/}
+        <div className ="right" style={{
+          display: 'grid',
+          gridTemplateColumns: `repeat(${numCols}, 15px)`,
+          alignItems: 'center',
+          justifyContent: 'center',
+          margin: '0% 0.5%'
+        }}>
+          {grid.map((rows, i) => 
+            rows.map((col, h) => 
+            <div 
+            key={`${i}-${h}`}
+            // Clickable/Tappable
             onClick={() => {
-              setSpeed(true);
+              // can be clicked to allow user to setup initial cell configuration
+              const newGrid = produce(grid, gridCopy => {
+                // Toggle state functionality: switch between alive & dead either because user manually toggled cell before starting simulation
+                gridCopy[i][h] = grid[i][h] ? 0 : 1;
+              })
+              setGrid(newGrid);
             }}
-          > 
-            10x Speed 
-          </button>
-        ) : (
-          <button
-            onClick={() => {
-              setSpeed(false);
-            }}
-          >
-            1x Speed 
-          </button>
-        )}
-      {/* Button to clear the grid */}
-      <button onClick={() => {
-        setGrid(emptyGrid());
-      }}>
-        Clear
-      </button>
-      {/* Cell objects or components properties*/}
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: `repeat(${numCols}, 15px)`
-      }}>
-        {grid.map((rows, i) => 
-          rows.map((col, h) => 
-          <div 
-          key={`${i}-${h}`}
-          // Clickable/Tappable
-          onClick={() => {
-            // can be clicked to allow user to setup initial cell configuration
-            const newGrid = produce(grid, gridCopy => {
-              // Toggle state functionality: switch between alive & dead either because user manually toggled cell before starting simulation
-              gridCopy[i][h] = grid[i][h] ? 0 : 1;
-            })
-            setGrid(newGrid);
-          }}
-            style={{
-              width: 15,
-              height: 15, 
-              // current state: (alive, dead), (green, white)
-              backgroundColor: grid[i][h] ? 'mediumspringgreen' : undefined,
-              border: "solid 1px black"
-            }}
-          />
-        ))}
+              style={{
+                width: 15,
+                height: 15, 
+                // current state: (alive, dead), (green, white)
+                backgroundColor: grid[i][h] ? 'green' : undefined,
+                border: "solid 1px black"
+              }}
+            />
+          ))}
+        </div>
       </div>
-    </>
+    </ div>
   );
 }
 
