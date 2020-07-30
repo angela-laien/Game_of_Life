@@ -60,6 +60,8 @@ function App() {
 
   const [speed, setSpeed] = useState(false);
 
+  const [generation, setGeneration] = useState(0);
+
   const runningRef = useRef(running);
   runningRef.current = running;
 
@@ -67,6 +69,7 @@ function App() {
     if (!runningRef.current) {
       return;
     }
+    setGeneration(generation => generation + 1);
     setGrid((g) => {
       return generateCell(g);
     });    
@@ -78,6 +81,7 @@ function App() {
     if (!runningRef.current) {
       return;
     }
+    setGeneration(generation => generation + 1);
     setGrid((g) => {
       return generateCell(g);
     });
@@ -112,7 +116,7 @@ function App() {
                 generationStep();
               }}
             >
-              Generation
+              Generate
             </button>
             {/* CUSTOM FEATURES #1 Add an option that creates a random cell configuration that users can run */}
             <button onClick={() => {
@@ -123,6 +127,7 @@ function App() {
               }
             
               setGrid(rows);
+              setGeneration(0);
             }}>
               Random
             </button>
@@ -147,10 +152,12 @@ function App() {
             {/* Button to clear the grid */}
             <button onClick={() => {
               setGrid(emptyGrid());
+              setGeneration(0);
             }}>
               Clear
             </button>
           </div>
+          <p className="generation">Generations: {generation}</p>
         </div>
         {/* Cell objects or components properties*/}
         <div className ="right" style={{
