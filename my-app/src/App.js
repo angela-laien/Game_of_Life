@@ -2,56 +2,51 @@ import React, {useState, useCallback, useRef} from 'react';
 import produce from 'immer';
 import './App.scss';
 
-// An appropriate data structure to hold a grid of cells that is at least 25x25
-const numRows = 28;
-const numCols = 28;
+function App() {
+  const numRows = 28;
+  const numCols = 28;
 
-const operations = [
-  [0, 1],
-  [0, -1],
-  [1, -1],
-  [-1, 1],
-  [1, 1],
-  [-1, -1],
-  [1, 0],
-  [-1, 0]
-];
+  const operations = [
+    [0, 1],
+    [0, -1],
+    [1, -1],
+    [-1, 1],
+    [1, 1],
+    [-1, -1],
+    [1, 0],
+    [-1, 0]
+  ];
 
-const emptyGrid = () => {
-  const rows = [];
-  for (let i = 0; i < numRows; i++) {
-    rows.push(Array.from(Array(numCols), () => 0))
+  const emptyGrid = () => {
+    const rows = [];
+    for (let i = 0; i < numRows; i++) {
+      rows.push(Array.from(Array(numCols), () => 0))
+    }
+    return rows;
   }
 
-  return rows;
-}
-
-const generateCell = (g) => {
-  return produce(g, gridCopy => {
-    for (let i = 0; i < numRows; i++) {
-      for (let h = 0; h < numCols; h++) {
-        // Examine state of all eight neighbors
-        let neighbors = 0;
-        operations.forEach(([x, y]) => {
-          const newI = i + x;
-          const newH = h + y;
-          // Apply rules of life to determine if this cell will change states
-          if (newI >= 0 && newI < numRows && newH >= 0 && newH < numCols) {
-            neighbors += g[newI][newH]
+  const generateCell = (g) => {
+    return produce(g, gridCopy => {
+      for (let i = 0; i < numRows; i++) {
+        for (let h = 0; h < numCols; h++) {
+          let neighbors = 0;
+          operations.forEach(([x, y]) => {
+            const newI = i + x;
+            const newH = h + y;
+            if (newI >= 0 && newI < numRows && newH >= 0 && newH < numCols) {
+              neighbors += g[newI][newH]
+            }
+          })
+          if (neighbors < 2 || neighbors > 3) {
+            gridCopy[i][h] = 0;
+          } else if (g[i][h] === 0 && neighbors === 3) {
+            gridCopy[i][h] = 1;
           }
-        })
-        if (neighbors < 2 || neighbors > 3) {
-          gridCopy[i][h] = 0;
-        } else if (g[i][h] === 0 && neighbors === 3) {
-          gridCopy[i][h] = 1;
         }
       }
-    }
-  });
-}
+    });
+  }
 
-function App() {
-  // Grid to display cells
   const [grid, setGrid] = useState(() => {
     return emptyGrid()
   });
@@ -109,7 +104,7 @@ function App() {
             >
               {running ? 'Stop' : 'Start'}
             </button>
-            {/* Provide functionality to manually step through the simulation one generation at a time, as opposed to animating automatically */}
+            {/* Manually step through the simulation one generation at a time, as opposed to animating automatically */}
             <button
               onClick={() => {
                 runningRef.current = true;
@@ -160,12 +155,13 @@ function App() {
           <p className="generation">Generations: {generation}</p>
         </div>
         {/* Cell objects or components properties*/}
-        <div className ="right" style={{
-          display: 'grid',
-          gridTemplateColumns: `repeat(${numCols}, 15px)`,
-          alignItems: 'center',
-          justifyContent: 'center',
-          margin: '0% 0.5%'
+        <div className ="right" 
+          style={{
+            display: 'grid',
+            gridTemplateColumns: `repeat(${numCols}, 15px)`,
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0% 0.5%'
         }}>
           {grid.map((rows, i) => 
             rows.map((col, h) => 
@@ -184,7 +180,7 @@ function App() {
                 width: 15,
                 height: 15, 
                 // current state: (alive, dead), (green, white)
-                backgroundColor: grid[i][h] ? 'green' : undefined,
+                backgroundColor: grid[i][h] ? 'green' : 'white',
                 border: "solid 1px black"
               }}
             />
