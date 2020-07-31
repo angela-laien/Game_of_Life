@@ -2,8 +2,7 @@ import React, {useState, useCallback, useRef} from 'react';
 import produce from 'immer';
 import './App.scss';
 
-function App() {
-  const numRows = 28;
+const numRows = 28;
   const numCols = 28;
 
   const operations = [
@@ -47,6 +46,8 @@ function App() {
     });
   }
 
+function App() {
+  
   const [grid, setGrid] = useState(() => {
     return emptyGrid()
   });
